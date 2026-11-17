@@ -27,4 +27,4 @@ A persistent, web-deployable AI research chat assistant built with Python, Strea
 1. **Clone the repository:**
    ```bash
    git clone [https://github.com/alfrddb/my-ai-agent.git](https://github.com/alfrddb/my-ai-agent.git)
-   cd your-repo-name
+   cd my-ai-agent
