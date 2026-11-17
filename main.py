@@ -7,18 +7,24 @@ from google.genai import types
 
 load_dotenv()
 
-API_KEY = os.getenv("GEMINI_API_KEY")
+API_KEY = os.getenv("GEMINI_API_KEY") or st.secrets.get("GEMINI_API_KEY")
 if not API_KEY:
-    st.error("CRITICAL ERROR: GEMINI_API_KEY missing in environment variables!")
+    st.error("CRITICAL ERROR: GEMINI_API_KEY missing in environment variables or Streamlit secrets!")
     st.stop()
-
-client = genai.Client(api_key=API_KEY)
 
 st.set_page_config(page_title="AI Research Chat", page_icon="🤖", layout="centered")
 
 st.title("🤖 AI Research Chat Agent")
 st.markdown("Your persistent research assistant powered by Gemini 3.5 Flash-Lite.")
 
+# --- Inizializzazione sicura del Client (Evita che venga chiuso) ---
+@st.cache_resource
+def get_genai_client(api_key: str):
+    return genai.Client(api_key=api_key)
+
+client = get_genai_client(API_KEY)
+
+# --- Gestione della chat persistente in session_state ---
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = client.chats.create(
         model='gemini-3.5-flash-lite',
@@ -31,13 +37,12 @@ if "chat_session" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# --- Sidebar per il download sicuro basato sulla chat attiva ---
+# --- Sidebar per il download sicuro dei log ---
 with st.sidebar:
     st.header("⚙️ Research Management")
     st.markdown("Download your current session logs anytime.")
     
     if st.session_state.messages:
-        # Costruisce il testo del log direttamente dalla cronologia attiva
         log_content = f"AI Research Chat Session Export - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
         log_content += "=" * 50 + "\n\n"
         
@@ -54,10 +59,12 @@ with st.sidebar:
     else:
         st.info("Start chatting to generate downloadable logs.")
 
+# Visualizzazione cronologia messaggi
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+# Invio nuovo messaggio
 if user_prompt := st.chat_input("Type your question here..."):
     st.session_state.messages.append({"role": "user", "content": user_prompt})
     with st.chat_message("user"):
