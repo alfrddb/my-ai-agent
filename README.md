@@ -2,7 +2,7 @@
 
 A persistent, web-deployable AI research chat assistant built with Python, Streamlit, and the official Google GenAI SDK, powered by `gemini-3.5-flash-lite`.
 
-🌐 **Live Demo:** [Try the live app here!](https://share.streamlit.io/) *(https://my-ai-agent-8wrbpl8qgeinvfpdxsaxs5.streamlit.app/)*
+🌐 **Live Demo:** [Try the live app here!]([https://share.streamlit.io/](https://my-ai-agent-8wrbpl8qgeinvfpdxsaxs5.streamlit.app/)) *(https://my-ai-agent-8wrbpl8qgeinvfpdxsaxs5.streamlit.app/)*
 
 ---
 
