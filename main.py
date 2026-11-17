@@ -19,7 +19,9 @@ st.set_page_config(page_title="AI Research Chat", page_icon="🤖", layout="cent
 st.title("🤖 AI Research Chat Agent")
 st.markdown("Your persistent research assistant powered by Gemini 3.5 Flash-Lite.")
 
-def save_log(prompt: str, response: str, filename: str = "research_logs.txt"):
+LOG_FILENAME = "research_logs.txt"
+
+def save_log(prompt: str, response: str, filename: str = LOG_FILENAME):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     log_entry = f"""==================================================
 Timestamp: {timestamp}
@@ -31,6 +33,24 @@ RESPONSE:
 ==================================================\n\n"""
     with open(filename, "a", encoding="utf-8") as f:
         f.write(log_entry)
+
+# --- Sidebar per la gestione dei log ---
+with st.sidebar:
+    st.header("⚙️ Research Management")
+    st.markdown("Download your session research logs below.")
+    
+    if os.path.exists(LOG_FILENAME):
+        with open(LOG_FILENAME, "r", encoding="utf-8") as f:
+            log_data = f.read()
+        
+        st.download_button(
+            label="📥 Download Research Logs",
+            data=log_data,
+            file_name=LOG_FILENAME,
+            mime="text/plain"
+        )
+    else:
+        st.info("No logs generated in this session yet.")
 
 if "chat_session" not in st.session_state:
     st.session_state.chat_session = client.chats.create(
